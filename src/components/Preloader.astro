@@ -1,0 +1,24 @@
+---
+import Photo from "./Photo.astro";
+import type { Lang } from "../i18n/ui";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const layerPhotos = ["styled-5", "styled-2", "base-5", "pre-1"];
+---
+
+<section class="preloader" aria-hidden="true">
+  <div class="preloader__count u-h1">0</div>
+  <div class="preloader__bottom">
+    <svg class="preloader__logo"><use href="#logo"></use></svg>
+    <div class="preloader__loader"><svg><use href="#spin"></use></svg></div>
+  </div>
+  <div class="preloader__images">
+    <div class="preloader__stack">
+      {layerPhotos.map((id) => <Photo id={id} lang={lang} decorative eager sizes="16rem" widths={[320]} class="preloader__layer" />)}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,55 @@
+---
+import Base from "../layouts/Base.astro";
+import Photo from "../components/Photo.astro";
+import { ui, type Lang } from "../i18n/ui";
+import { routes, otherLang } from "../i18n/routes";
+import { site } from "../data/site";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang];
+const about = t.about;
+const blocks = [
+  { heading: about.storyHeading, text: about.storyText },
+  { heading: about.makingHeading, text: about.makingText }
+];
+---
+
+<Base
+  lang={lang}
+  title={about.title}
+  description={about.description}
+  path={routes.about[lang]}
+  alternatePath={routes.about[otherLang(lang)]}
+>
+  <div class="sub">
+    <div class="about__head">
+      <h1 class="u-h1" set:html={about.heading} />
+      <p class="about__lead">{about.lead}</p>
+    </div>
+    <div class="about__gallery">
+      <div class="about__shot is-wide">
+        <Photo id="prod-0" lang={lang} eager sizes="(max-width: 767px) 100vw, 60vw" widths={[640, 960, 1280]} />
+      </div>
+      <div class="about__shot">
+        <Photo id="pre-2" lang={lang} sizes="(max-width: 767px) 100vw, 38vw" widths={[320, 480]} />
+      </div>
+    </div>
+    <div class="about__blocks">
+      {blocks.map((block) => (
+        <section>
+          <h2>{block.heading}</h2>
+          <p>{block.text}</p>
+        </section>
+      ))}
+      <section>
+        <h2>{about.contactHeading}</h2>
+        <p>{about.contactText} <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a></p>
+      </section>
+    </div>
+    <a class="btn" href={`${routes.home[lang]}#${t.anchors.products}`} style="align-self:flex-start;margin-top:4rem" hover-stagger-wrap><span class="u-btn" hover-stagger>{t.header.cta}</span></a>
+  </div>
+</Base>

@@ -1,0 +1,42 @@
+---
+import { Picture } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import type { Lang } from "../i18n/ui";
+import { photos } from "../data/photos";
+
+interface Props {
+  id: string;
+  lang: Lang;
+  sizes: string;
+  widths?: number[];
+  decorative?: boolean;
+  eager?: boolean;
+  class?: string;
+}
+
+const photoFiles = import.meta.glob<{ default: ImageMetadata }>("../assets/photos/*.webp", { eager: true });
+
+const { id, lang, sizes, widths = [320, 640, 960], decorative = false, eager = false, class: className } = Astro.props;
+const source = photoFiles[`../assets/photos/${id}.webp`]?.default;
+const info = photos[id];
+const fittingWidths = source ? widths.filter((width) => width < source.width) : [];
+---
+
+{!source && (
+  <div class:list={["ph", "ph--missing", className]} role={decorative ? undefined : "img"} aria-label={decorative ? undefined : info.alt[lang]}>
+    <span aria-hidden="true">[[{id}.webp]]</span>
+  </div>
+)}
+{source && <Picture
+  src={source}
+  alt={decorative ? "" : info.alt[lang]}
+  formats={["avif"]}
+  fallbackFormat="webp"
+  widths={[...fittingWidths, source.width]}
+  sizes={sizes}
+  loading={eager ? "eager" : "lazy"}
+  decoding="async"
+  class:list={["ph", className]}
+  style={`object-position:50% ${info.focusY ?? 50}%`}
+  pictureAttributes={{ class: "ph-picture" }}
+/>}

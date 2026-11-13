@@ -1,0 +1,97 @@
+---
+import "../styles/global.css";
+import Sprite from "../components/Sprite.astro";
+import Header from "../components/Header.astro";
+import Menu from "../components/Menu.astro";
+import Footer from "../components/Footer.astro";
+import Preloader from "../components/Preloader.astro";
+import { ui, type Lang } from "../i18n/ui";
+import { otherLang } from "../i18n/routes";
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  path: string;
+  alternatePath: string;
+  preloader?: boolean;
+  indexable?: boolean;
+}
+
+const { lang, title, description, path, alternatePath, preloader = false, indexable = true } = Astro.props;
+const t = ui[lang];
+const canonical = new URL(path, Astro.site).href;
+const alternate = new URL(alternatePath, Astro.site).href;
+const polishUrl = lang === "pl" ? canonical : alternate;
+const englishUrl = lang === "en" ? canonical : alternate;
+const ogImage = new URL("/og.png", Astro.site).href;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {indexable ? <link rel="canonical" href={canonical} /> : <meta name="robots" content="noindex" />}
+    {indexable && <link rel="alternate" hreflang="pl" href={polishUrl} />}
+    {indexable && <link rel="alternate" hreflang="en" href={englishUrl} />}
+    {indexable && <link rel="alternate" hreflang="x-default" href={polishUrl} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Aurea" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={t.ogLocale} />
+    <meta property="og:locale:alternate" content={ui[otherLang(lang)].ogLocale} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#f9f0f5" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin />
+    {preloader && (
+      <script is:inline>
+        (function () {
+          var root = document.documentElement;
+          if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+          var visited = false;
+          try {
+            visited = localStorage.getItem("aurea_preloader_v1") === "1";
+          } catch (error) {
+            visited = false;
+          }
+          root.classList.add("intro-pending");
+          if (!visited) root.classList.add("is-loading");
+          setTimeout(function () {
+            if (!window.aureaPreloaderStarted) root.classList.remove("is-loading", "intro-pending");
+          }, 6000);
+        })();
+      </script>
+    )}
+  </head>
+  <body class="body light">
+    <script is:inline>
+      try {
+        if (localStorage.getItem("aurea-light") === "false") document.body.classList.remove("light");
+      } catch (error) {}
+    </script>
+    <a class="skip-link" href="#main">{t.skipLink}</a>
+    <Sprite />
+    {preloader && <Preloader lang={lang} />}
+    <Header lang={lang} alternatePath={alternatePath} />
+    <Menu lang={lang} alternatePath={alternatePath} currentPath={path} />
+    <main class="page" id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} alternatePath={alternatePath} currentPath={path} />
+    <script>
+      import "../scripts/site";
+    </script>
+  </body>
+</html>

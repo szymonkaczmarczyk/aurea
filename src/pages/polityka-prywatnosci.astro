@@ -1,0 +1,7 @@
+---
+import LegalView from "../views/LegalView.astro";
+import { privacy } from "../legal/documents";
+import { routes } from "../i18n/routes";
+---
+
+<LegalView lang="pl" document={privacy.pl} path={routes.privacy.pl} alternatePath={routes.privacy.en} />

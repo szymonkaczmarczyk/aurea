@@ -1,0 +1,7 @@
+---
+import LegalView from "../../views/LegalView.astro";
+import { terms } from "../../legal/documents";
+import { routes } from "../../i18n/routes";
+---
+
+<LegalView lang="en" document={terms.en} path={routes.terms.en} alternatePath={routes.terms.pl} />

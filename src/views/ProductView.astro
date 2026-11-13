@@ -1,0 +1,88 @@
+---
+import Base from "../layouts/Base.astro";
+import Photo from "../components/Photo.astro";
+import { ui, type Lang } from "../i18n/ui";
+import { routes, productPath, otherLang } from "../i18n/routes";
+import { products, type Product } from "../data/products";
+import { site } from "../data/site";
+
+interface Props {
+  lang: Lang;
+  product: Product;
+}
+
+const { lang, product } = Astro.props;
+const t = ui[lang];
+const other = otherLang(lang);
+const productIndex = products.findIndex((candidate) => candidate.id === product.id);
+const isLastStep = productIndex === products.length - 1;
+const nextProduct = products[(productIndex + 1) % products.length];
+const folds = [
+  { heading: t.product.inci, text: product.inci },
+  { heading: t.product.forWhom, text: product.forWhom[lang] }
+];
+---
+
+<Base
+  lang={lang}
+  title={`${product.name[lang]} – Aurea`}
+  description={product.metaDescription[lang]}
+  path={productPath(lang, product.slug[lang])}
+  alternatePath={productPath(other, product.slug[other])}
+>
+  <div class="sub">
+    <a class="arrow-link is-back sub__back" href={`${routes.home[lang]}#${t.anchors.products}`}>
+      <svg aria-hidden="true"><use href="#arrow-back"></use></svg>{t.product.back}
+    </a>
+    <article class="product">
+      <div class="product__gallery">
+        {product.galleryPhotos.map((photoId, photoIndex) => (
+          <div class:list={["product__shot", { "is-main": photoIndex === 0 }]}>
+            <Photo
+              id={photoId}
+              lang={lang}
+              eager={photoIndex === 0}
+              sizes={photoIndex === 0 ? "(max-width: 991px) 100vw, 48vw" : "(max-width: 991px) 50vw, 24vw"}
+              widths={[320, 480, 640]}
+            />
+          </div>
+        ))}
+      </div>
+      <div class="product__info">
+        <header>
+          <div class="product__step u-small-text-2">{t.product.step} {product.step} · {product.kind[lang]}</div>
+          <h1 class="product__name u-h1">{product.name[lang]}</h1>
+          <p class="product__lead">{product.lead[lang]}</p>
+        </header>
+        <dl class="product__facts">
+          <div><dt>{t.product.volume}</dt><dd>{product.volume}</dd></div>
+          <div><dt>{t.product.price}</dt><dd>{product.price[lang]}</dd></div>
+          <div><dt>{t.product.pao}</dt><dd>{product.periodAfterOpening[lang]}</dd></div>
+        </dl>
+        <section class="product__block">
+          <h2>{t.product.howTo}</h2>
+          <p>{product.howTo[lang]}</p>
+        </section>
+        <div>
+          {folds.map((fold) => (
+            <details class="fold">
+              <summary>{fold.heading}<svg aria-hidden="true"><use href="#plus"></use></svg></summary>
+              <p>{fold.text}</p>
+            </details>
+          ))}
+          <details class="fold">
+            <summary>{t.product.whereToBuy}<svg aria-hidden="true"><use href="#plus"></use></svg></summary>
+            <p>{t.product.whereToBuyText} <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a></p>
+          </details>
+        </div>
+        <a class="product__next" href={productPath(lang, nextProduct.slug[lang])}>
+          <span>
+            <small>{isLastStep ? t.product.backToFirst : `${t.product.next} · ${nextProduct.step}`}</small>
+            <strong>{nextProduct.name[lang]}</strong>
+          </span>
+          <svg aria-hidden="true"><use href="#arrow"></use></svg>
+        </a>
+      </div>
+    </article>
+  </div>
+</Base>

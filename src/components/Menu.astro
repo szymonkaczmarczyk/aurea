@@ -1,0 +1,49 @@
+---
+import { ui, type Lang } from "../i18n/ui";
+import { routes } from "../i18n/routes";
+
+interface Props {
+  lang: Lang;
+  alternatePath: string;
+  currentPath: string;
+}
+
+const { lang, alternatePath, currentPath } = Astro.props;
+const t = ui[lang];
+const home = routes.home[lang];
+const polishPath = lang === "pl" ? currentPath : alternatePath;
+const englishPath = lang === "en" ? currentPath : alternatePath;
+---
+
+<section class="menu">
+  <div class="menu__wrap-main">
+    <nav class="menu__wrap" id="site-menu" aria-label={t.menu.navLabel}>
+      <div class="menu__item">
+        <div class="u-small-text-1 u-fonts-50">{t.menu.groupMain}</div>
+        <div class="menu__links">
+          <a class="u-title-3" href={`${home}#${t.anchors.products}`} hover-stagger>{t.menu.products}</a>
+          <a class="u-title-3" href={`${home}#${t.anchors.ritual}`} hover-stagger>{t.menu.ritual}</a>
+          <a class="u-title-3" href={`${home}#${t.anchors.philosophy}`} hover-stagger>{t.menu.philosophy}</a>
+          <a class="u-title-3" href={routes.about[lang]} hover-stagger>{t.menu.about}</a>
+        </div>
+      </div>
+      <div class="menu__item is-lined">
+        <div class="u-small-text-1 u-fonts-50">{t.menu.groupInfo}</div>
+        <div class="menu__links">
+          <a class="u-title-2" href={routes.privacy[lang]} hover-stagger>{t.menu.privacy}</a>
+          <a class="u-title-2" href={routes.terms[lang]} hover-stagger>{t.menu.terms}</a>
+        </div>
+      </div>
+      <div class="menu__item is-last">
+        <div class="u-small-text-1 u-fonts-50">{t.menu.groupLang}</div>
+        <div class="menu__links is-row">
+          <a class="u-title-2" href={polishPath} hreflang="pl" lang="pl" aria-current={lang === "pl" ? "true" : undefined}>{t.menu.polish}</a>
+          <a class="u-title-2" href={englishPath} hreflang="en" lang="en" aria-current={lang === "en" ? "true" : undefined}>{t.menu.english}</a>
+        </div>
+      </div>
+      <div class="menu__item is-auth">
+        <a class="btn" href={`${home}#${t.anchors.products}`}><span class="u-btn">{t.header.cta}</span></a>
+      </div>
+    </nav>
+  </div>
+</section>

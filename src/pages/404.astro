@@ -1,0 +1,18 @@
+---
+import Base from "../layouts/Base.astro";
+import { ui } from "../i18n/ui";
+import { routes } from "../i18n/routes";
+
+const polish = ui.pl.notFound;
+const english = ui.en.notFound;
+---
+
+<Base lang="pl" title={polish.title} description={polish.description} path="/404/" alternatePath={routes.home.en} indexable={false}>
+  <div class="lost">
+    <div class="lost__code" aria-hidden="true">404</div>
+    <h1 class="u-h1" set:html={polish.heading} />
+    <p class="lost__text">{polish.text}</p>
+    <a class="btn" href={routes.home.pl} hover-stagger-wrap><span class="u-btn" hover-stagger>{polish.cta}</span></a>
+    <p class="lost__alt" lang="en">{english.text} <a href={routes.home.en}>{english.cta}</a></p>
+  </div>
+</Base>

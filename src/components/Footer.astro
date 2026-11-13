@@ -1,0 +1,69 @@
+---
+import { ui, type Lang } from "../i18n/ui";
+import { routes, productPath } from "../i18n/routes";
+import { products } from "../data/products";
+import { site } from "../data/site";
+
+interface Props {
+  lang: Lang;
+  alternatePath: string;
+  currentPath: string;
+}
+
+const { lang, alternatePath, currentPath } = Astro.props;
+const t = ui[lang];
+const home = routes.home[lang];
+const polishPath = lang === "pl" ? currentPath : alternatePath;
+const englishPath = lang === "en" ? currentPath : alternatePath;
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">
+      <a class="header__logo" href={home} aria-label={t.header.homeLabel}>
+        <svg aria-hidden="true"><use href="#logo"></use></svg>
+        <span class="header__word" translate="no">Aurea</span>
+      </a>
+      <p class="footer__tagline">{t.footer.tagline}</p>
+    </div>
+    <nav class="footer__col" aria-label={t.footer.products}>
+      <div class="u-small-text-1 u-fonts-50">{t.footer.products}</div>
+      <ul>
+        {products.map((product) => <li><a href={productPath(lang, product.slug[lang])}>{product.name[lang]}</a></li>)}
+      </ul>
+    </nav>
+    <nav class="footer__col" aria-label={t.footer.brand}>
+      <div class="u-small-text-1 u-fonts-50">{t.footer.brand}</div>
+      <ul>
+        <li><a href={routes.about[lang]}>{t.menu.about}</a></li>
+        <li><a href={`${home}#${t.anchors.ritual}`}>{t.menu.ritual}</a></li>
+        <li><a href={`${home}#${t.anchors.philosophy}`}>{t.menu.philosophy}</a></li>
+      </ul>
+    </nav>
+    <nav class="footer__col" aria-label={t.footer.info}>
+      <div class="u-small-text-1 u-fonts-50">{t.footer.info}</div>
+      <ul>
+        <li><a href={routes.privacy[lang]}>{t.menu.privacy}</a></li>
+        <li><a href={routes.terms[lang]}>{t.menu.terms}</a></li>
+      </ul>
+    </nav>
+    <div class="footer__col">
+      <div class="u-small-text-1 u-fonts-50">{t.footer.contact}</div>
+      <ul>
+        <li><a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a></li>
+        <li>{t.footer.phone}</li>
+        <li>{site.companyName}</li>
+        <li>{t.footer.address}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer__word" aria-hidden="true" translate="no">Aurea</div>
+  <div class="footer__bottom">
+    <span>© {year} <span translate="no">Aurea</span>. {t.footer.rights}</span>
+    <div class="footer__langs">
+      <a href={polishPath} hreflang="pl" lang="pl" aria-current={lang === "pl" ? "true" : undefined}>{t.menu.polish}</a>
+      <a href={englishPath} hreflang="en" lang="en" aria-current={lang === "en" ? "true" : undefined}>{t.menu.english}</a>
+    </div>
+  </div>
+</footer>

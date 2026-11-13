@@ -1,0 +1,28 @@
+---
+import Base from "../layouts/Base.astro";
+import { ui, type Lang } from "../i18n/ui";
+import type { LegalDocument } from "../legal/documents";
+
+interface Props {
+  lang: Lang;
+  document: LegalDocument;
+  path: string;
+  alternatePath: string;
+}
+
+const { lang, document, path, alternatePath } = Astro.props;
+const t = ui[lang];
+---
+
+<Base lang={lang} title={document.title} description={document.description} path={path} alternatePath={alternatePath}>
+  <article class="legal">
+    <h1 class="u-h1" set:html={document.heading} />
+    <p class="legal__updated">{t.legal.updated}: {document.updated}</p>
+    {document.sections.map((section) => (
+      <section>
+        <h2>{section.heading}</h2>
+        {section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+      </section>
+    ))}
+  </article>
+</Base>

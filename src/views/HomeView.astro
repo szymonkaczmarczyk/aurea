@@ -1,0 +1,181 @@
+---
+import Base from "../layouts/Base.astro";
+import Photo from "../components/Photo.astro";
+import { ui, type Lang } from "../i18n/ui";
+import { routes, productPath, otherLang } from "../i18n/routes";
+import { products } from "../data/products";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang];
+const home = t.home;
+const ringPhotos = [
+  { angle: 0, id: "ringa-1" },
+  { angle: 45, id: "styled-2" },
+  { angle: 90, id: "ringb-1" },
+  { angle: 135, id: "styled-3" },
+  { angle: 180, id: "ringa-3" },
+  { angle: 225, id: "base-5" },
+  { angle: 270, id: "ringb-3" },
+  { angle: 315, id: "ringb-2" }
+];
+const chipRows = [home.chips, home.chips];
+const phraseColumns = [false, true];
+const productsHref = `#${t.anchors.products}`;
+---
+
+<Base
+  lang={lang}
+  title={home.title}
+  description={home.description}
+  path={routes.home[lang]}
+  alternatePath={routes.home[otherLang(lang)]}
+  preloader
+>
+  <section class="hero">
+    <div class="hero__wrap">
+      <a class="hero__scroll u-small-text-2" href={`#${t.anchors.philosophy}`} data-hero-text>{home.scroll}</a>
+    </div>
+    <div class="hero__slider" aria-hidden="true">
+      <div class="hero__slider__wrap">
+        {chipRows.map((chips) => (
+          <div class="hero__slider__row">
+            {chips.map((chip) => <div class="hero__chip">{chip}</div>)}
+          </div>
+        ))}
+        <div class="hero__slider__fade is-start"></div>
+        <div class="hero__slider__fade is-end"></div>
+      </div>
+    </div>
+    <div class="hero__carousel__wrap" aria-hidden="true">
+      <div class="hero__carousel__in">
+        {ringPhotos.map((ringPhoto) => (
+          <div class="hero__carousel__deg" data-deg={ringPhoto.angle}>
+            <div class="hero__carousel__card">
+              <Photo id={ringPhoto.id} lang={lang} decorative eager sizes="(max-width: 767px) 20vw, 12vw" widths={[160, 240, 400]} class="hero__carousel__img" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+    <div class="hero__center">
+      <h1 class="hero__title" data-hero-text set:html={home.heroTitle} />
+      <div class="hero__actions">
+        <p class="hero__lead">{home.heroLead}</p>
+        <a class="btn" href={productsHref} hover-stagger-wrap><span class="u-btn" hover-stagger>{t.header.cta}</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section id={t.anchors.philosophy} class="how">
+    <div class="how__main">
+      <div class="how__left">
+        <div class="u-tag">{home.philosophyTag}</div>
+        <h2 class="how__title" data-flash set:html={home.philosophyTitle} />
+        <p class="how__text">{home.philosophyText}</p>
+      </div>
+      <div class="how__right">
+        {phraseColumns.map((isCopy) => (
+          <div class="how__col" aria-hidden={isCopy ? "true" : undefined}>
+            {home.phrases.map((phrase) => (
+              <div class="how__item"><div class="how__phrase" set:html={phrase} /></div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id={t.anchors.products} class="line">
+    <div class="line__panel">
+      <div class="line__tag"><span class="line__dot"></span><span class="u-title-2">{home.lineTag}</span></div>
+      <div class="line__head">
+        <h2 class="u-h3" data-flash set:html={home.lineTitle} />
+        <p class="line__text">{home.lineText}</p>
+      </div>
+      <div class="line__grid">
+        {products.map((product, index) => (
+          <a class:list={["pcard", { "is-feature": index === 0 }]} href={productPath(lang, product.slug[lang])}>
+            <div class="pcard__media">
+              <Photo id={product.cardPhoto} lang={lang} sizes="(max-width: 991px) 100vw, 45vw" widths={[480, 640]} />
+            </div>
+            <div class="pcard__body">
+              <div>
+                <div class="pcard__step u-small-text-2">{t.product.step} {product.step} · {product.kind[lang]}</div>
+                <h3 class="pcard__name">{product.name[lang]}</h3>
+                <p class="pcard__lead">{product.lead[lang]}</p>
+              </div>
+              <div class="pcard__foot">
+                <div class="pcard__facts">
+                  <span>{t.product.volume}: <b>{product.volume}</b></span>
+                  <span>{t.product.price}: <b>{product.price[lang]}</b></span>
+                </div>
+                <span class="arrow-link">{t.product.view}<svg aria-hidden="true"><use href="#arrow"></use></svg></span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id={t.anchors.ritual} class="list">
+    <div class="list__wrap">
+      <div class="list__main__wrap">
+        {products.map((product) => (
+          <div class="list__main__slide">
+            <div class="list__main__content-wrap">
+              <div class:list={["list__main__content", product.gradient]}>
+                <div class="st__top">
+                  <div class="st__title-row">
+                    <h2 class="st__h" data-flash set:html={product.ritualTitle[lang]} />
+                    <div class="st__num" data-flash aria-hidden="true">{product.step}</div>
+                  </div>
+                  <div class="st__info">
+                    {product.ritualNotes[lang].map((note) => (
+                      <div>
+                        <h3 class="st__tag">{note.tag}</h3>
+                        <p class="st__p" set:html={note.text} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div class="st__row">
+                  {product.ritualPhotos.map((photoId, photoIndex) => (
+                    <div class:list={["st__card", { w: photoIndex === 0 }]}>
+                      <Photo id={photoId} lang={lang} sizes={photoIndex === 0 ? "(max-width: 767px) 100vw, 38vw" : "(max-width: 767px) 50vw, 20vw"} widths={[320, 480, 640]} />
+                      {photoIndex === 0 && (
+                        <a class="st__cap" href={productPath(lang, product.slug[lang])}>
+                          <span>{product.name[lang]} - {t.product.view.toLowerCase()}</span>
+                          <svg aria-hidden="true"><use href="#arrow"></use></svg>
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="outro">
+    <div class="outro__copy">
+      <h2 class="outro__title" data-flash set:html={home.outroTitle} />
+      <p class="outro__text">{home.outroText}</p>
+      <a class="btn" href={productsHref} hover-stagger-wrap><span class="u-btn" hover-stagger>{t.header.cta}</span></a>
+    </div>
+    <div class="outro__media">
+      <Photo id="prod-0" lang={lang} sizes="(max-width: 991px) 100vw, 50vw" widths={[640, 960, 1280]} />
+    </div>
+  </section>
+
+  <script>
+    import "../scripts/home";
+  </script>
+</Base>
