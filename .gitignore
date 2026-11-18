@@ -27,3 +27,7 @@ zrodla/
 
 .DS_Store
 * 2*
+
+test-results/
+playwright-report/
+blob-report/
