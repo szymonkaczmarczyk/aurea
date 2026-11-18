@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Check, build i testy e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+
+      - name: Instalacja zależności
+        run: npm ci
+
+      - name: Astro check
+        run: npm run check
+
+      - name: Instalacja Chromium dla Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Build i testy e2e
+        run: npm run test:e2e
+
+      - name: Raport Playwright
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-wyniki
+          path: test-results/
+          retention-days: 7
