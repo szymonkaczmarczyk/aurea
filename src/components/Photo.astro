@@ -1,8 +1,7 @@
 ---
 import { Picture } from "astro:assets";
-import type { ImageMetadata } from "astro";
 import type { Lang } from "../i18n/ui";
-import { photos } from "../data/photos";
+import { photos, photoSource } from "../data/photos";
 
 interface Props {
   id: string;
@@ -14,10 +13,8 @@ interface Props {
   class?: string;
 }
 
-const photoFiles = import.meta.glob<{ default: ImageMetadata }>("../assets/photos/*.webp", { eager: true });
-
 const { id, lang, sizes, widths = [320, 640, 960], decorative = false, eager = false, class: className } = Astro.props;
-const source = photoFiles[`../assets/photos/${id}.webp`]?.default;
+const source = photoSource(id);
 const info = photos[id];
 const fittingWidths = source ? widths.filter((width) => width < source.width) : [];
 ---

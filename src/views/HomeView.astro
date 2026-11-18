@@ -3,7 +3,8 @@ import Base from "../layouts/Base.astro";
 import Photo from "../components/Photo.astro";
 import { ui, type Lang } from "../i18n/ui";
 import { routes, productPath, otherLang } from "../i18n/routes";
-import { products } from "../data/products";
+import { products, formatPrice } from "../data/products";
+import { homeStructuredData } from "../seo/structured-data";
 
 interface Props {
   lang: Lang;
@@ -34,6 +35,7 @@ const productsHref = `#${t.anchors.products}`;
   path={routes.home[lang]}
   alternatePath={routes.home[otherLang(lang)]}
   preloader
+  structuredData={homeStructuredData(lang, Astro.site!)}
 >
   <section class="hero">
     <div class="hero__wrap">
@@ -111,7 +113,7 @@ const productsHref = `#${t.anchors.products}`;
               <div class="pcard__foot">
                 <div class="pcard__facts">
                   <span>{t.product.volume}: <b>{product.volume}</b></span>
-                  <span>{t.product.price}: <b>{product.price[lang]}</b></span>
+                  <span>{t.product.price}: <b>{formatPrice(lang, product.price)}</b></span>
                 </div>
                 <span class="arrow-link">{t.product.view}<svg aria-hidden="true"><use href="#arrow"></use></svg></span>
               </div>

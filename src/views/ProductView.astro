@@ -1,10 +1,13 @@
 ---
+import { getImage } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import Photo from "../components/Photo.astro";
 import { ui, type Lang } from "../i18n/ui";
 import { routes, productPath, otherLang } from "../i18n/routes";
-import { products, type Product } from "../data/products";
+import { products, formatPrice, type Product } from "../data/products";
 import { site } from "../data/site";
+import { photoSource } from "../data/photos";
+import { productStructuredData } from "../seo/structured-data";
 
 interface Props {
   lang: Lang;
@@ -17,6 +20,9 @@ const other = otherLang(lang);
 const productIndex = products.findIndex((candidate) => candidate.id === product.id);
 const isLastStep = productIndex === products.length - 1;
 const nextProduct = products[(productIndex + 1) % products.length];
+const mainPhoto = photoSource(product.galleryPhotos[0]);
+const mainImage = mainPhoto ? await getImage({ src: mainPhoto, format: "webp", width: Math.min(1200, mainPhoto.width) }) : undefined;
+const mainImageUrl = mainImage ? new URL(mainImage.src, Astro.site).href : undefined;
 const folds = [
   { heading: t.product.inci, text: product.inci },
   { heading: t.product.forWhom, text: product.forWhom[lang] }
@@ -29,6 +35,7 @@ const folds = [
   description={product.metaDescription[lang]}
   path={productPath(lang, product.slug[lang])}
   alternatePath={productPath(other, product.slug[other])}
+  structuredData={productStructuredData(lang, product, Astro.site!, mainImageUrl)}
 >
   <div class="sub">
     <a class="arrow-link is-back sub__back" href={`${routes.home[lang]}#${t.anchors.products}`}>
@@ -56,7 +63,7 @@ const folds = [
         </header>
         <dl class="product__facts">
           <div><dt>{t.product.volume}</dt><dd>{product.volume}</dd></div>
-          <div><dt>{t.product.price}</dt><dd>{product.price[lang]}</dd></div>
+          <div><dt>{t.product.price}</dt><dd>{formatPrice(lang, product.price)}</dd></div>
           <div><dt>{t.product.pao}</dt><dd>{product.periodAfterOpening[lang]}</dd></div>
         </dl>
         <section class="product__block">

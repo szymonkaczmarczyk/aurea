@@ -13,7 +13,7 @@ export type Product = {
   howTo: Localized;
   metaDescription: Localized;
   volume: string;
-  price: Localized;
+  price: number;
   periodAfterOpening: Localized;
   inci: string;
   forWhom: Localized;
@@ -23,6 +23,12 @@ export type Product = {
   ritualPhotos: [string, string, string, string];
   galleryPhotos: [string, string, string];
 };
+
+export const PRICE_CURRENCY = "PLN";
+
+export function formatPrice(lang: Lang, amount: number): string {
+  return lang === "pl" ? `${amount} zł` : `${PRICE_CURRENCY} ${amount}`;
+}
 
 export const products: Product[] = [
   {
@@ -45,7 +51,7 @@ export const products: Product[] = [
       en: "Aurea cleansing gel is the first step of the facial skincare ritual. See how to use it and check the ingredients."
     },
     volume: "150 ml",
-    price: { pl: "89 zł", en: "PLN 89" },
+    price: 89,
     periodAfterOpening: { pl: "12 miesięcy", en: "12 months" },
     inci: "Aqua, Glycerin, Coco-Glucoside, Sodium Cocoyl Glutamate, Cocamidopropyl Betaine, Betaine, Panthenol, Allantoin, Lavandula Angustifolia Flower Water, Xanthan Gum, Citric Acid, Sodium Benzoate, Potassium Sorbate.",
     forWhom: {
@@ -87,7 +93,7 @@ export const products: Product[] = [
       en: "Aurea serum is the second step of the facial skincare ritual, between the gel and the cream. See how to use it and check the ingredients."
     },
     volume: "30 ml",
-    price: { pl: "149 zł", en: "PLN 149" },
+    price: 149,
     periodAfterOpening: { pl: "6 miesięcy", en: "6 months" },
     inci: "Aqua, Niacinamide, Glycerin, Propanediol, Sodium Hyaluronate, Panthenol, Betaine, Allantoin, Xanthan Gum, Citric Acid, Sodium Benzoate, Potassium Sorbate.",
     forWhom: {
@@ -129,7 +135,7 @@ export const products: Product[] = [
       en: "Aurea cream is the third and last step of the facial skincare ritual. See how to use it and check the ingredients."
     },
     volume: "50 ml",
-    price: { pl: "129 zł", en: "PLN 129" },
+    price: 129,
     periodAfterOpening: { pl: "12 miesięcy", en: "12 months" },
     inci: "Aqua, Caprylic/Capric Triglyceride, Glycerin, Butyrospermum Parkii Butter, Cetearyl Alcohol, Glyceryl Stearate, Squalane, Niacinamide, Ceramide NP, Panthenol, Tocopherol, Sodium Hyaluronate, Xanthan Gum, Citric Acid, Sodium Benzoate, Potassium Sorbate.",
     forWhom: {

@@ -7,6 +7,7 @@ import Footer from "../components/Footer.astro";
 import Preloader from "../components/Preloader.astro";
 import { ui, type Lang } from "../i18n/ui";
 import { otherLang } from "../i18n/routes";
+import { serializeJsonLd } from "../seo/structured-data";
 
 interface Props {
   lang: Lang;
@@ -16,9 +17,10 @@ interface Props {
   alternatePath: string;
   preloader?: boolean;
   indexable?: boolean;
+  structuredData?: Record<string, unknown>;
 }
 
-const { lang, title, description, path, alternatePath, preloader = false, indexable = true } = Astro.props;
+const { lang, title, description, path, alternatePath, preloader = false, indexable = true, structuredData } = Astro.props;
 const t = ui[lang];
 const canonical = new URL(path, Astro.site).href;
 const alternate = new URL(alternatePath, Astro.site).href;
@@ -53,6 +55,7 @@ const ogImage = new URL("/og.png", Astro.site).href;
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {structuredData && <script is:inline type="application/ld+json" set:html={serializeJsonLd(structuredData)} />}
     <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin />
     {preloader && (

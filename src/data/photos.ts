@@ -1,4 +1,11 @@
+import type { ImageMetadata } from "astro";
 import type { Lang } from "../i18n/ui";
+
+const photoFiles = import.meta.glob<{ default: ImageMetadata }>("../assets/photos/*.webp", { eager: true });
+
+export function photoSource(id: string): ImageMetadata | undefined {
+  return photoFiles[`../assets/photos/${id}.webp`]?.default;
+}
 
 type PhotoInfo = { alt: Record<Lang, string>; focusY?: number };
 
